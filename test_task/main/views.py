@@ -45,7 +45,7 @@ class PollsDetail(APIView):
 
     def post(self, request, pk, format=None):
         queryset = Poll.objects.get(pk=pk)
-        serializer = PollSerializer(queryset)
+        serializer = PollSerializer(queryset, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
