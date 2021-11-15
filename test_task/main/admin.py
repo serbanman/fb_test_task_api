@@ -6,5 +6,5 @@ class PollAdmin(admin.ModelAdmin):
     readonly_fields = ('start_date',)
 
 
-admin.site.register(Poll)
+admin.site.register(Poll, PollAdmin)
 admin.site.register(Question)

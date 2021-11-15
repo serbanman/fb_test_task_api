@@ -7,7 +7,7 @@ class Poll(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, blank=True)
-    start_date = models.DateTimeField(default=timezone.now())
+    start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(blank=True, null=True)
     description = models.CharField(max_length=255, blank=True)
 
