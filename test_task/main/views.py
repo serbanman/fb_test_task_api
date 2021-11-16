@@ -1,9 +1,8 @@
 from django.contrib.auth.models import AnonymousUser, User
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import viewsets, mixins, status
+from rest_framework import status
 import datetime
 import pytz
 
@@ -13,6 +12,7 @@ from main.models import Poll, Question, RespondentUser, Answer
 
 
 class TestView(APIView):
+    # placeholder
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, format=None):
@@ -23,7 +23,8 @@ class TestView(APIView):
 
 
 class PollsList(APIView):
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # get the list of polls or create an entry
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, format=None):
         queryset = Poll.objects.all()
@@ -39,8 +40,8 @@ class PollsList(APIView):
 
 
 class PollsDetail(APIView):
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # retrieve, update or delete the poll entry based on specific pk
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, pk, format=None):
         queryset = Poll.objects.get(pk=pk)
@@ -64,7 +65,8 @@ class PollsDetail(APIView):
 
 
 class QuestionsList(APIView):
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # get the list of questions or create an entry
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, format=None):
         queryset = Question.objects.all()
@@ -84,8 +86,8 @@ class QuestionsList(APIView):
 
 
 class QuestionsDetail(APIView):
-    # authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    # create, retrieve, update or delete the question entry based on specific pk
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, pk, format=None):
         queryset = Question.objects.get(pk=pk)
@@ -109,7 +111,7 @@ class QuestionsDetail(APIView):
 
 
 class ActivePolls(APIView):
-
+    # get the list of all the active polls in which the end_date did not come yet
     def get(self, request):
         queryset = Poll.objects.filter(end_date__gte=datetime.datetime.now(tz=pytz.UTC))
         serializer = PollSerializer(queryset, many=True)
@@ -171,5 +173,13 @@ class LeaveAnAnswer(APIView):
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AnswersList(APIView):
+    # get the list of all answers by the RespondentUser
+    def get(self, request, pk, format=None):
+        queryset = Answer.objects.filter(respondent_user=pk)
+        serializer = AnswerSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 

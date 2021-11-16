@@ -51,7 +51,6 @@ class QuestionSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         try:
-            print(f"--->{validated_data['poll']['id']}")
             text = validated_data['text']
             choice_type = validated_data['choice_type']
             poll_entry = Poll.objects.get(
@@ -76,15 +75,11 @@ class QuestionSerializer(serializers.Serializer):
 class AnswerSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     question = serializers.IntegerField(source='question.id', required=True)
-    # respondent_user = serializers.IntegerField(source='respondent_user.id')
     answer_text = serializers.CharField(max_length=255, allow_blank=False, required=True)
 
     class Meta:
         model = Answer
         fields = [
             'question',
-            # 'respondent_user',
             'answer_text'
         ]
-
-    # def create(self, validated_data):
