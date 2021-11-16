@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from main.models import Poll, Question
+from main.models import Poll, Question, Answer
 
 
 class PollSerializer(serializers.Serializer):
@@ -72,3 +72,19 @@ class QuestionSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+
+class AnswerSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    question = serializers.IntegerField(source='question.id', required=True)
+    # respondent_user = serializers.IntegerField(source='respondent_user.id')
+    answer_text = serializers.CharField(max_length=255, allow_blank=False, required=True)
+
+    class Meta:
+        model = Answer
+        fields = [
+            'question',
+            # 'respondent_user',
+            'answer_text'
+        ]
+
+    # def create(self, validated_data):
