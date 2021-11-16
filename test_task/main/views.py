@@ -146,5 +146,30 @@ class LeaveAnAnswer(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # else:
-        #     user = User.objects.get()
+        else:
+            # if user is authorized, we get or create an entry of RespondentUser for him
+            local_user = User.objects.get(pk=request.user.id)
+            user, created = RespondentUser.objects.get_or_create(
+                authorized_credentials=local_user
+            )
+
+            serializer = AnswerSerializer(data=request.data)
+            if serializer.is_valid():
+                # and then creating the Answer entry, based on RespondentUser entry and
+                # the data from the request
+
+                question_id = serializer.validated_data.get('question')['id']
+                answer_text = serializer.validated_data.get('answer_text')
+
+                question = Question.objects.get(pk=question_id)
+
+                answer = Answer.objects.get_or_create(
+                    question=question,
+                    answer_text=answer_text,
+                    respondent_user=user
+                )
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
