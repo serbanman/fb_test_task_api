@@ -26,7 +26,7 @@ class TestView(APIView):
 
 
 class BasicAuth(APIView):
-
+    # the most basic auth entrypoint
     def post(self, request, format=None):
         username = request.data.get('username')
         password = request.data.get('password')
