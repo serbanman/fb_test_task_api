@@ -3,6 +3,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, mixins, status
+import datetime
+import pytz
 
 from main.serializers import PollSerializer, QuestionSerializer
 from main.models import Poll, Question
@@ -102,3 +104,11 @@ class QuestionsDetail(APIView):
             queryset.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ActivePolls(APIView):
+
+    def get(self, request):
+        queryset = Poll.objects.filter(end_date__gte=datetime.datetime.now(tz=pytz.UTC))
+        serializer = PollSerializer(queryset, many=True)
+        return Response(serializer.data)

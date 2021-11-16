@@ -7,7 +7,7 @@ from main.models import Poll, Question
 class PollSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField(max_length=100, allow_blank=True, required=False)
-    start_date = serializers.DateTimeField(default=timezone.now)
+    start_date = serializers.DateTimeField(required=False, allow_null=True)
     end_date = serializers.DateTimeField(required=False, allow_null=True)
     description = serializers.CharField(max_length=255, allow_blank=True, required=False)
 

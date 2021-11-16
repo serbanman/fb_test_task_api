@@ -3,7 +3,13 @@ from main.models import Poll, Question
 
 
 class PollAdmin(admin.ModelAdmin):
-    readonly_fields = ('start_date',)
+    readonly_fields = []
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ['start_date']
+        else:
+            return []
 
 
 admin.site.register(Poll, PollAdmin)
