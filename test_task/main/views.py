@@ -97,7 +97,7 @@ class QuestionsDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        queryset = Poll.objects.get(pk=pk)
+        queryset = Question.objects.get(pk=pk)
         if queryset:
             queryset.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
