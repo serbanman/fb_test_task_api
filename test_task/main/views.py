@@ -70,6 +70,10 @@ class QuestionsList(APIView):
     def post(self, request, format=None):
         serializer = QuestionSerializer(data=request.data)
         if serializer.is_valid():
+            text = serializer.validated_data.get('text')
+            choice_type = serializer.validated_data.get('choice_type')
+            poll_id = serializer.validated_data.get('poll_id')
+            # print(text, choice_type, poll_id)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

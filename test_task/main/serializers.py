@@ -11,6 +11,10 @@ class PollSerializer(serializers.Serializer):
     end_date = serializers.DateTimeField(required=False, allow_null=True)
     description = serializers.CharField(max_length=255, allow_blank=True, required=False)
 
+    class Meta:
+        model = Poll
+        fields = '__all__'
+
     def create(self, validated_data):
         return Poll.objects.create(**validated_data)
 
@@ -40,9 +44,27 @@ class QuestionSerializer(serializers.Serializer):
         allow_null=True,
         allow_blank=True
     )
+    poll = serializers.IntegerField(source='poll.id')
+    class Meta:
+        model = Question
+        fields = ['text', 'choice_type', 'poll']
 
     def create(self, validated_data):
-        return Question.objects.create(**validated_data)
+        try:
+            print(f"--->{validated_data['poll']['id']}")
+            text = validated_data['text']
+            choice_type = validated_data['choice_type']
+            poll_entry = Poll.objects.get(
+                pk=validated_data['poll']['id']
+            )
+            return Question.objects.create(
+                text=text,
+                choice_type=choice_type,
+                poll=poll_entry
+            )
+        except Exception as ex:
+            print(ex)
+            return None
 
     def update(self, instance, validated_data):
         instance.text = validated_data.get('text', instance.text)
