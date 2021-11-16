@@ -1,8 +1,11 @@
+from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.models import AnonymousUser, User
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, exceptions
 import datetime
 import pytz
 
@@ -21,6 +24,16 @@ class TestView(APIView):
         }
         return Response(content)
 
+
+class BasicAuth(APIView):
+
+    def post(self, request, format=None):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        login(request, user)
+
+        return Response(user.id)
 
 class PollsList(APIView):
     # get the list of polls or create an entry
@@ -181,5 +194,3 @@ class AnswersList(APIView):
         queryset = Answer.objects.filter(respondent_user=pk)
         serializer = AnswerSerializer(queryset, many=True)
         return Response(serializer.data)
-
-
